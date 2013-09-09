@@ -67,6 +67,7 @@ void checkRelay() {
 }
 
 void toggleRelay(int wait) {
+  //probably silly use of recursion but meh
   if (wait != 0) {
     toggleRelay(0);
     delay(wait);
