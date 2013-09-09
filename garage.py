@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-
 import serial
 import redis
 import pynma
@@ -8,17 +7,12 @@ import time
 import os
 
 from config import *
+from shared import *
 
+wait_for_redis()
+    
 ser = serial.Serial(SERIAL_PORT,9600,timeout=5)
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-while True:
-  try:
-    r.get("test")
-    break
-  except:
-    time.sleep(1)
-    print "Waiting for redis..."
-    
 p = pynma.PyNMA( r.get('prowl-api-key') )
 ser.flushInput()
 

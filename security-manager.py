@@ -2,8 +2,10 @@
 
 from bottle import route, run
 import redis
-
+from shared import *
 from config import *
+
+wait_for_redis()
 
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
