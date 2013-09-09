@@ -5,9 +5,9 @@
 // constants won't change. Used here to 
 // set pin numbers:
 const int ledPin =     13;      // the number of the LED pin
-const int sensorPin =   2;      // the number of the LED pin
-const int pirPin =      3;      // the number of the LED pin
-const int relayPin =    4;      // the number of the LED pin
+const int sensorPin =   2;      // the number of the door sensor pin
+const int pirPin =      3;      // the number of the motion detector pin
+const int relayPin =    4;      // the number of the door opening relay pin
 
 
 // Variables will change:
