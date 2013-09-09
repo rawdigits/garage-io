@@ -1,0 +1,1 @@
+echo "set 'command' 'OPEN:'" | redis-cli

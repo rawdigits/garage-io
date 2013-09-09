@@ -1,0 +1,1 @@
+echo "set 'security-mode' 'DISARMED'" | redis-cli
