@@ -1,0 +1,3 @@
+SERIAL_PORT='/dev/ttyACM0'
+REDIS_HOST='localhost'
+REDIS_PORT=6379
