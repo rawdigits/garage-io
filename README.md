@@ -1,7 +1,9 @@
 garage-io
 =========
 
-Garage control and monitoring system. Uses Arduino > serial > python.
+Garage control and monitoring system. Uses Arduino > serial > python.  
+
+Currently sends push notification via Prowl for iOS and plays alarm sound via Raspberry PI headphone jack.
 
 ## Prerequisites:
 
