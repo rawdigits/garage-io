@@ -11,9 +11,14 @@ from config import *
 
 ser = serial.Serial(SERIAL_PORT,9600,timeout=5)
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
-#ugly hack to wait for redis to start on raspi
-time.sleep(15)
-
+while True:
+  try:
+    r.get("test")
+    break
+  except:
+    time.sleep(1)
+    print "Waiting for redis..."
+    
 p = pynma.PyNMA( r.get('prowl-api-key') )
 ser.flushInput()
 
