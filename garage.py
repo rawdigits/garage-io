@@ -36,6 +36,7 @@ def toggle_relay():
   if command != None and command[0:4] == "OPEN":
     ser.write(command + "!")
     r.set('command','')
+    time.sleep(.5)
     ser.flushInput()
 
 while True:
