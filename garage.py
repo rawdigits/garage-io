@@ -40,11 +40,11 @@ def toggle_relay():
     ser.flushInput()
 
 while True:
-  mode = r.get('security-mode')
   try:
     status,motion = ser.readline().strip().split(':')
   except:
     status,motion = "CLOSED","NOMOTION"
+  mode = r.get('security-mode')
   toggle_relay()
   r.set('security-status', "%s %s" % (status, motion))
   #This allows a TEMP DISARM mode, which means disable until we are 'CLOSED' again
