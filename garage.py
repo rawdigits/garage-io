@@ -39,6 +39,7 @@ def toggle_relay():
     time.sleep(.5)
     ser.flushInput()
 
+#YES I KNOW THIS NEEDS TO BECOME A STATE MACHINE
 while True:
   try:
     status,motion = ser.readline().strip().split(':')
