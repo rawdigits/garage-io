@@ -57,6 +57,13 @@ while True:
         if r.get('security-mode').strip() == "ARMED" and motion == "MOTION":
           alerter.alert("%s %s" % (status, motion))
         if status == 'CLOSED':
+          #First if we see movement someone is presumably inside intentionally
+          closed_time = time.time()
+          while time.time() < closed_time + 15:
+            status, motion = ser.readline().strip().split(':')
+            if motion == "MOTION":
+              r.set('security-mode', 'TEMPDISARMED')
+          #Otherwise arm the system
           r.set('security-mode', 'ARMED')
           p.push("GARAGE","GARAGE","REARMED")
           break
