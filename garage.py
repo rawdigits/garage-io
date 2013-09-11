@@ -63,6 +63,7 @@ while True:
             status, motion = ser.readline().strip().split(':')
             if motion == "MOTION":
               r.set('security-mode', 'TEMPDISARMED')
+              break
           #Otherwise arm the system
           r.set('security-mode', 'ARMED')
           p.push("GARAGE","GARAGE","REARMED")
