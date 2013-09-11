@@ -57,6 +57,7 @@ while True:
         if r.get('security-mode').strip() == "ARMED" and motion == "MOTION":
           alerter.alert("%s %s" % (status, motion))
         if status == 'CLOSED':
+          p.push("GARAGE","GARAGE", "Door Closed")
           #First if we see movement someone is presumably inside intentionally
           security_mode = "ARMED"
           closed_time = time.time()
