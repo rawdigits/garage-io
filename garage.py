@@ -63,6 +63,7 @@ while True:
           while time.time() < closed_time + 15:
             print "15 second window"
             status, motion = ser.readline().strip().split(':')
+            r.set('security-status', "%s %s" % (status, motion))
             if motion == "MOTION":
               security_mode = "TEMPDISARMED"
           #Otherwise arm the system
