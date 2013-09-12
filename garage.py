@@ -55,8 +55,8 @@ def check_mode():
   return mode
   
 
+#YES I KNOW THIS NEEDS TO BECOME A STATE MACHINE
 while True:
-  print 'normal loop'
   status,motion = check_sensors()
   mode = check_mode()
   toggle_relay()
@@ -64,7 +64,6 @@ while True:
   if mode == 'TEMPDISARMED':
     if status == 'OPEN':
       while True:
-        print 'door open loop'
         status, motion = check_sensors()
         toggle_relay()
         #allows you to arm motion sensor without closing door
@@ -76,7 +75,6 @@ while True:
           security_mode = "ARMED"
           closed_time = time.time()
           while time.time() < closed_time + 15:
-            print "15 second window"
             status, motion = check_sensors()
             if motion == "MOTION":
               security_mode = "TEMPDISARMED"
