@@ -66,9 +66,12 @@ while True:
       while True:
         status, motion = check_sensors()
         toggle_relay()
-        #allows you to arm motion sensor without closing door
-        if check_mode() == "ARMED" and motion == "MOTION":
+        #allows you to arm motion sensor without closing door and disarm to break the loop
+        mode = check_mode()
+        if mode == "ARMED" and motion == "MOTION":
           alerter.alert("%s %s" % (status, motion))
+        elif mode == "DISARM":
+          break
         if status == 'CLOSED':
           p.push("GARAGE","GARAGE", "Door Closed")
           #First if we see movement someone is presumably inside intentionally
