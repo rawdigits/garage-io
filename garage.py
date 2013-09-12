@@ -39,22 +39,36 @@ def toggle_relay():
     time.sleep(.5)
     ser.flushInput()
 
-while True:
+def check_sensors():
   try:
     status,motion = ser.readline().strip().split(':')
   except:
     status,motion = "CLOSED","NOMOTION"
-  mode = r.get('security-mode')
-  toggle_relay()
   r.set('security-status', "%s %s" % (status, motion))
+  return status,motion
+
+def check_mode():
+  try:
+    mode = r.get('security-mode').strip()
+  except:
+    mode = "ARMED"
+  return mode
+  
+
+while True:
+  print 'normal loop'
+  status,motion = check_sensors()
+  mode = check_mode()
+  toggle_relay()
   #This allows a TEMP DISARM mode, which means disable until we are 'CLOSED' again
   if mode == 'TEMPDISARMED':
     if status == 'OPEN':
       while True:
-        status, motion = ser.readline().strip().split(':')
+        print 'door open loop'
+        status, motion = check_sensors()
         toggle_relay()
-        r.set('security-status', "%s %s" % (status, motion))
-        if r.get('security-mode').strip() == "ARMED" and motion == "MOTION":
+        #allows you to arm motion sensor without closing door
+        if check_mode() == "ARMED" and motion == "MOTION":
           alerter.alert("%s %s" % (status, motion))
         if status == 'CLOSED':
           p.push("GARAGE","GARAGE", "Door Closed")
@@ -63,14 +77,15 @@ while True:
           closed_time = time.time()
           while time.time() < closed_time + 15:
             print "15 second window"
-            status, motion = ser.readline().strip().split(':')
-            r.set('security-status', "%s %s" % (status, motion))
+            status, motion = check_sensors()
             if motion == "MOTION":
               security_mode = "TEMPDISARMED"
           #Otherwise arm the system
           r.set('security-mode', security_mode)
           p.push("GARAGE","GARAGE", security_mode)
           break
+    else:
+      continue
 
   if (status != 'CLOSED' or motion == 'MOTION') and mode == 'ARMED':
     alerter.alert("%s %s" % (status, motion))
