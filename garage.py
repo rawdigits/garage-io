@@ -58,8 +58,8 @@ def check_mode():
 #YES I KNOW THIS NEEDS TO BECOME A STATE MACHINE
 while True:
   status,motion = check_sensors()
-  mode = check_mode()
   toggle_relay()
+  mode = check_mode()
   #This allows a TEMP DISARM mode, which means disable until we are 'CLOSED' again
   if mode == 'TEMPDISARMED':
     if status == 'OPEN':
