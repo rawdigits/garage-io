@@ -16,6 +16,12 @@ r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 p = pynma.PyNMA( r.get('prowl-api-key') )
 ser.flushInput()
 
+def send_message(message):
+  try:
+    p.push("GARAGE","GARAGE",message)
+  except:
+    pass
+
 class Alerter:
   def __init__(self):
     self.last_alert = 0
@@ -23,7 +29,7 @@ class Alerter:
   def alert(self, message):
     if time.time() > (self.last_alert + 10):
       for i in range(1,5):
-        p.push("GARAGE","GARAGE",message)
+        send_message(message)
         time.sleep(.5)
         os.system('/usr/bin/aplay /home/pi/alarm.wav')
       ser.flushInput()
@@ -73,7 +79,7 @@ while True:
         elif mode == "DISARM":
           break
         if status == 'CLOSED':
-          p.push("GARAGE","GARAGE", "Door Closed")
+          send_message("Door Closed")
           #First if we see movement someone is presumably inside intentionally
           security_mode = "ARMED"
           closed_time = time.time()
@@ -83,7 +89,7 @@ while True:
               security_mode = "TEMPDISARMED"
           #Otherwise arm the system
           r.set('security-mode', security_mode)
-          p.push("GARAGE","GARAGE", security_mode)
+          send_message(security_mode)
           break
     else:
       continue
