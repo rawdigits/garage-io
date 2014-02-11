@@ -39,7 +39,7 @@ alerter = Alerter()
 
 def toggle_relay():
   command = r.get('command')
-  print "%s : %s" % (Time.asctime(), command)
+  print "%s : %s" % (time.asctime(), command)
   if command != None and command[0:4] == "OPEN":
     ser.write(command + "!")
     r.set('command','')
