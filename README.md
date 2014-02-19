@@ -1,6 +1,7 @@
 garage-io
 =========
 
+NOW BATTLE TESTED! (see below)
 Garage control and monitoring system. Uses Arduino > serial > python.  
 
 Currently sends push notification via Prowl for iOS and plays alarm sound via Raspberry PI headphone jack.
@@ -27,6 +28,9 @@ bottle.py
 
 ## Optional:
 PyNMA
+
+##This guy opened my garage at 4am, thanks to garage-io he got zero things:
+![Jerk](https://dl.dropboxusercontent.com/u/566560/208-capture.jpg)
 
 ## Questionably alpha hardware:
 ![Version 1](https://dl.dropboxusercontent.com/u/566560/garage-security.jpg)
