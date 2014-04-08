@@ -10,7 +10,7 @@ from config import *
 from shared import *
 
 wait_for_redis()
-    
+
 ser = serial.Serial(SERIAL_PORT,9600,timeout=5)
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 p = pynma.PyNMA( r.get('prowl-api-key') )
@@ -37,22 +37,28 @@ class Alerter:
 
 alerter = Alerter()
 
-def toggle_relay():
-  command = r.get('command')
-  print "%s : %s" % (time.asctime(), command)
-  if command != None and command[0:4] == "OPEN":
-    ser.write(command + "!")
-    r.set('command','')
-    time.sleep(.5)
-    ser.flushInput()
+def toggle_relay(now = None):
+  if now:
+    ser.write("OPEN:0" + "!")
+    time.sleep(1)
+  else:
+    command = r.get('command')
+    print "%s : %s" % (time.asctime(), command)
+    if command != None and command[0:4] == "OPEN":
+      ser.write(command + "!")
+      r.set('command','')
+      time.sleep(.5)
+      ser.flushInput()
 
 def check_sensors():
   try:
-    status,motion = ser.readline().strip().split(':')
+    state_in = ser.readline().strip().split(':')
+    state = {"status":state_in[0], "motion":state_in[1], "button":state_in[2]}
   except:
-    status,motion = "CLOSED","NOMOTION"
-  r.set('security-status', "%s %s" % (status, motion))
-  return status,motion
+    state = {"status":"CLOSED", "motion":"NOMOTION", "button":"UNPRESSED"}
+  hard_button.monitor(state["button"])
+  r.set('security-status', "%s" % (state))
+  return state
 
 def check_mode():
   try:
@@ -60,33 +66,55 @@ def check_mode():
   except:
     mode = "ARMED"
   return mode
-  
+
+class Button:
+  def __init__(self):
+    self.last_state = ""
+    self.checked = True
+  def check(self):
+    print "called check, checked: %s" % (self.checked)
+    if self.checked == False:
+      self.checked = True
+      return True
+    else:
+      return False
+  def monitor(self, state):
+    if state != self.last_state and state == "PRESSED":
+      self.checked = False
+    self.last_state = state
+
+hard_button = Button()
+
 
 #YES I KNOW THIS NEEDS TO BECOME A STATE MACHINE
 while True:
-  status,motion = check_sensors()
+  state = check_sensors()
   toggle_relay()
   mode = check_mode()
   #This allows a TEMP DISARM mode, which means disable until we are 'CLOSED' again
   if mode == 'TEMPDISARMED':
-    if status == 'OPEN':
+    if hard_button.check():
+      toggle_relay(True)
+    if state["status"] == 'OPEN':
       while True:
-        status, motion = check_sensors()
+        if hard_button.check():
+          toggle_relay(True)
+        state = check_sensors()
         toggle_relay()
         #allows you to arm motion sensor without closing door and disarm to break the loop
         mode = check_mode()
-        if mode == "ARMED" and motion == "MOTION":
-          alerter.alert("%s %s" % (status, motion))
+        if mode == "ARMED" and state["motion"] == "MOTION":
+          alerter.alert("%s" % (state))
         elif mode == "DISARM":
           break
-        if status == 'CLOSED':
+        if state["status"] == 'CLOSED':
           send_message("Door Closed")
           #First if we see movement someone is presumably inside intentionally
           security_mode = "ARMED"
           closed_time = time.time()
           while time.time() < closed_time + 15:
-            status, motion = check_sensors()
-            if motion == "MOTION":
+            state = check_sensors()
+            if state["motion"] == "MOTION":
               security_mode = "TEMPDISARMED"
           #Otherwise arm the system
           r.set('security-mode', security_mode)
@@ -95,8 +123,12 @@ while True:
     else:
       continue
 
-  if (status != 'CLOSED' or motion == 'MOTION') and mode == 'ARMED':
-    alerter.alert("%s %s" % (status, motion))
+  if (state["status"] != 'CLOSED' or state["motion"] == 'MOTION') and mode == 'ARMED':
+    alerter.alert("%s" % (state))
   elif mode == 'TEST':
     r.set('security-mode', '')
-    alerter.alert("%s %s" % (status, motion))
+    alerter.alert("%s" % (state))
+  else:
+    #this below line makes sure a tempdisarm doesn't open the door accidentally
+    hard_button.check()
+
