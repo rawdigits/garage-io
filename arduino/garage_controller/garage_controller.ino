@@ -8,6 +8,7 @@ const int ledPin =     13;      // the number of the LED pin
 const int sensorPin =   2;      // the number of the door sensor pin
 const int pirPin =      3;      // the number of the motion detector pin
 const int relayPin =    4;      // the number of the door opening relay pin
+const int buttonPin =   5;      // the number of the button switch pin
 
 
 // Variables will change:
@@ -25,8 +26,19 @@ void setup() {
   digitalWrite(pirPin, LOW);
   pinMode(relayPin, OUTPUT);
   digitalWrite(relayPin, HIGH);
+  pinMode(buttonPin, INPUT);
+  digitalWrite(buttonPin, HIGH);
   //delay(20000); // Wait for PIR to warm up
   Serial.begin(9600);
+}
+
+String checkButton() {
+  int state = digitalRead(buttonPin);
+  if (state == HIGH) {
+    return "UNPRESSED";
+  } else {
+    return "PRESSED";
+  }
 }
 
 String checkDoor() {
@@ -84,7 +96,7 @@ void loop()
   if(currentMillis - previousMillis > interval) {
     previousMillis = currentMillis;   
     checkRelay();
-    Serial.println(checkDoor() + ":" + checkMotion());
+    Serial.println(checkDoor() + ":" + checkMotion() + ":" + checkButton());
     digitalWrite(ledPin, ledState);
   }
 }
