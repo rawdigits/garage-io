@@ -39,12 +39,16 @@ alerter = Alerter()
 
 def toggle_relay(now = None):
   if now:
+    security_mode = "TEMPDISARMED"
+    r.set('security-mode', security_mode)
     ser.write("OPEN:0" + "!")
     time.sleep(1)
   else:
     command = r.get('command')
     print "%s : %s" % (time.asctime(), command)
     if command != None and command[0:4] == "OPEN":
+      security_mode = "TEMPDISARMED"
+      r.set('security-mode', security_mode)
       ser.write(command + "!")
       r.set('command','')
       time.sleep(.5)
