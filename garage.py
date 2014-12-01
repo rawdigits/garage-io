@@ -25,7 +25,11 @@ class Sensors(object):
         #sensors = 'OPEN:NOMOTION:UNPRESSED'.split(':')
         #sensors.append('ARMED')
         sensors = ser.readline().strip().split(':')
+        print sensors
         sensors.append(r.get('security-mode').strip())
+        if len(sensors) > 2:
+            s = {"status":sensors[0], "motion":sensors[1], "button":sensors[2]}
+            r.set('security-status', s)
         self.sensors = sensors
     #print self.sensors
     def check(self, values):
