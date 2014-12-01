@@ -25,9 +25,9 @@ class Sensors(object):
         #sensors = 'OPEN:NOMOTION:UNPRESSED'.split(':')
         #sensors.append('ARMED')
         sensors = ser.readline().strip().split(':')
-	sensors.append(r.get('security-mode').strip())
+        sensors.append(r.get('security-mode').strip())
         self.sensors = sensors
-	#print self.sensors
+    #print self.sensors
     def check(self, values):
         if not self.debug:
             self.update_sensors()
@@ -44,7 +44,7 @@ class Garage(object):
     def transition(self):
         command = r.get("command")
         if command.startswith("APPOPEN"):
-	    milliseconds = command.split(":")[1]
+            milliseconds = command.split(":")[1]
             set_disarmed()
             toggle_relay(milliseconds)
             clear_command()
@@ -107,14 +107,14 @@ def toggle_relay(milliseconds=None):
     if milliseconds:
         ser.write("OPEN:{}!".format(milliseconds))
     else:
-        ser.write("OPEN!")
+        ser.write("OPEN:0!")
     print "relay toggled"
     pass
 
 if __name__ == "__main__":
     garage = Garage()
     prev_state = ""
-    ser = serial.Serial(SERIAL_PORT,9600,timeout=5)
+    ser = serial.Serial(SERIAL_PORT, 9600, timeout=5)
     ser.flushInput()
     r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
     while True:
