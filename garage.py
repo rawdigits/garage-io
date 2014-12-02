@@ -42,6 +42,7 @@ class Garage(object):
         self.state = 'open'
         self.sensors = Sensors()
         self.timer = 0
+        self.prev_state = ""
     def transition(self):
         command = r.get("command")
         if command.startswith("APPOPEN"):
