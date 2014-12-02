@@ -33,8 +33,6 @@ class Sensors(object):
         self.sensors = sensors
     #print self.sensors
     def check(self, values):
-        if not self.debug:
-            self.update_sensors()
         return self.find(values)
     def debug_set(self, values):
         self.debug = True
@@ -53,6 +51,7 @@ class Garage(object):
             toggle_relay(milliseconds)
             clear_command()
 
+        self.sensors.update_sensors()
         if self.state == "closed":
             if self.sensors.check(["OPEN", "DISARM"]):
                 self.state = "open"
