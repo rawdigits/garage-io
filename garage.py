@@ -25,10 +25,9 @@ class Sensors(object):
         #sensors = 'OPEN:NOMOTION:UNPRESSED'.split(':')
         #sensors.append('ARMED')
         sensors = ser.readline().strip().split(':')
-        print sensors
         sensors.append(r.get('security-mode').strip())
         if len(sensors) > 2:
-            s = {"status":sensors[0], "motion":sensors[1], "button":sensors[2]}
+            s = {"status": sensors[0], "motion": sensors[1], "button": sensors[2]}
             r.set('security-status', s)
         self.sensors = sensors
     #print self.sensors
@@ -92,6 +91,10 @@ class Garage(object):
         elif self.state == "alarming":
             if self.sensors.check(["DISARM"]):
                 self.state = "open"
+
+        if self.prev_state != self.state:
+            print "State changed to: {}".format(self.state)
+            self.prev_state = self.state
 
 def clear_command():
     r.set('command', "")
