@@ -95,6 +95,7 @@ class Garage(object):
 
         if self.prev_state != self.state:
             print "State changed to: {}".format(self.state)
+            r.set('state', self.state)
             self.prev_state = self.state
 
 def clear_command():
