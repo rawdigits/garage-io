@@ -1,0 +1,35 @@
+#sketch out basic flow
+
+outputs:
+  alarm
+  door relay
+
+inputs:
+  door sensor (open/closed)
+  motion sensor (movement/nomovement)
+  button (pressed/nopressed)
+  armed (true/false)
+  
+closed:
+  armed_false, door_sensor_open => open
+  button_pressed, armed_false => (nothing) o: door relay
+  armed_true, door_sensor_open => alarming
+  armed_true, motion_sensor_movement => alarming
+  armed_true, button_pressed => alarming
+
+open:
+  door_sensor_closed => arming + 
+  button_pressed, armed_true => alarming
+  button_pressed, armed_false => (nothing) o: door relay
+
+arming:
+  timer_finished, motion_sensor_nomovement => closed AND set armed_true
+  timer_finished, motion_sensor_movement => closed AND set armed_false
+  button_pressed => (nothing) o: door relay
+  door_sensor_open => open
+
+alarming:
+  armed_false => open 
+
+
+
