@@ -46,7 +46,7 @@ class Garage(object):
         self.last_pressed_time = 0
 
     def toggle_if_waited_enough(self):
-        if time.time() > self.last_pressed_time + 2:
+        if time.time() > self.last_pressed_time + 1:
             toggle_relay()
             self.last_pressed_time = time.time()
 
