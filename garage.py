@@ -130,6 +130,7 @@ if __name__ == "__main__":
     ser = serial.Serial(SERIAL_PORT, 9600, timeout=5)
     ser.flushInput()
     r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+    initialize()
     while True:
         garage.transition()
         if garage.state != prev_state:
