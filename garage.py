@@ -119,6 +119,11 @@ def toggle_relay(milliseconds=None):
     print "relay toggled"
     pass
 
+def initialize(redis_connection):
+    r.set('command', "blah")
+    r.set('security-mode', "blah")
+    r.set('security-status', "blah")
+
 if __name__ == "__main__":
     garage = Garage()
     prev_state = ""
