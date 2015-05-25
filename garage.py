@@ -65,7 +65,6 @@ class Garage(object):
             elif self.sensors.check(["DISARM", "PRESSED"]):
                 print "PRESSED"
                 self.toggle_if_waited_enough()
-                #toggle_relay()
             elif self.sensors.check(["ARMED", "PRESSED"]):
                 self.state = "alarming"
             elif self.sensors.check(["ARMED", "MOTION"]):
@@ -82,7 +81,6 @@ class Garage(object):
                 self.state = "alarming"
             elif self.sensors.check(["PRESSED", "DISARM"]):
                 self.toggle_if_waited_enough()
-                #toggle_relay()
         elif self.state == "arming":
             if self.sensors.check(["MOTION", "CLOSED"]):
                 set_disarmed()
@@ -95,7 +93,6 @@ class Garage(object):
                 self.state = "open"
             elif self.sensors.check(["PRESSED"]):
                 self.toggle_if_waited_enough()
-                #toggle_relay()
         elif self.state == "timed_opening":
             if self.sensors.check(["DISARM"]):
                 self.state = "open"
