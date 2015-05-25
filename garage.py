@@ -43,6 +43,13 @@ class Garage(object):
         self.sensors = Sensors()
         self.timer = 0
         self.prev_state = ""
+        self.last_pressed_time = 0
+
+    def toggle_if_waited_enough(self):
+        if time.time() > self.last_pressed_time + 2:
+            toggle_relay()
+            self.last_pressed_time = time.time()
+
     def transition(self):
         command = r.get("command")
         if command.startswith("APPOPEN"):
@@ -57,7 +64,8 @@ class Garage(object):
                 self.state = "open"
             elif self.sensors.check(["DISARM", "PRESSED"]):
                 print "PRESSED"
-                toggle_relay()
+                self.toggle_if_waited_enough()
+                #toggle_relay()
             elif self.sensors.check(["ARMED", "PRESSED"]):
                 self.state = "alarming"
             elif self.sensors.check(["ARMED", "MOTION"]):
@@ -73,7 +81,8 @@ class Garage(object):
             elif self.sensors.check(["PRESSED", "ARMED"]):
                 self.state = "alarming"
             elif self.sensors.check(["PRESSED", "DISARM"]):
-                toggle_relay()
+                self.toggle_if_waited_enough()
+                #toggle_relay()
         elif self.state == "arming":
             if self.sensors.check(["MOTION", "CLOSED"]):
                 set_disarmed()
@@ -85,7 +94,8 @@ class Garage(object):
                 set_disarmed()
                 self.state = "open"
             elif self.sensors.check(["PRESSED"]):
-                toggle_relay()
+                self.toggle_if_waited_enough()
+                #toggle_relay()
         elif self.state == "timed_opening":
             if self.sensors.check(["DISARM"]):
                 self.state = "open"
